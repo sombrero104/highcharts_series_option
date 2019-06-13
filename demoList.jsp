@@ -142,6 +142,38 @@
 </head>
 <body>
 	<input type="hidden" id="currentPage" name="currentPage" value="" />
+	
+	<div id="datepicker_R_total" class="input-daterange input-group date_box">
+		<ul>
+			<li>
+				<label for="exampleInputName2">TIME_KEY</label>
+			</li>
+			<li style="width:168px;">
+				<input type="text" class="input-sm form-control" style="cursor:pointer;" id="startDate" name="startDate" value="" readonly="readonly">
+			</li>
+			<li style="width:39px;">
+				<select id="startTime" name="startTime">
+					<c:forEach var="startTime" begin="0" end="23" varStatus="stts">
+						 <fmt:formatNumber var="startTime" minIntegerDigits="2" value="${startTime}" type="number" />
+						 <option value="${startTime}">${startTime}</option>
+					</c:forEach>
+				</select>
+			</li>
+			<li style="width:8px;">~</li>
+			<li style="width:168px;">
+				<input type="text" class="input-sm form-control" style="cursor:pointer;" id="endDate" name="endDate" value="" readonly="readonly">
+			</li>
+			<li style="width:39px;">
+				<select id="endTime" name="endTime">
+					<c:forEach var="endTime" begin="0" end="23" varStatus="stts">
+						 <fmt:formatNumber var="endTime" minIntegerDigits="2" value="${endTime}" type="number" />
+						 <option value="${endTime}">${endTime}</option>
+					</c:forEach>
+				</select>
+			</li>
+		</ul>
+	</div>
+	
 	<div id="area"></div>
 	<%@ include file="/WEB-INF/view/include/pageNavi.jsp" %>
 	------------------------------------------------------------------------------------------------
