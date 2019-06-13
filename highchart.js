@@ -9,6 +9,115 @@
 	<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script><%-- Highchart Module(No Data) --%>
 
 /**
+ * 숫자 포맷(숫자 타입) - 천단위 ,(콤마) format()
+ */
+Number.prototype.format = function(){
+    if(this==0) return 0;
+    var reg = /(^[+-]?\d+)(\d{3})/;
+    var n = (this + '');
+    while (reg.test(n)) n = n.replace(reg, '$1' + ',' + '$2');
+    return n;
+};
+
+/**
+ * 숫자 포맷(문자열 타입) - 천단위 ,(콤마) format()
+ */
+String.prototype.format = function(){			
+    var num = parseFloat(this);
+    if( isNaN(num) ) return "0";
+    return num.format();
+};
+
+/**
+ * Date형(YYYY, MM-1, DD) => YYYYMMDD로 변환하여 반환
+ */
+function dateFormat(paramYear, paramMonth, paramDay) {
+	var tempYear = paramYear;
+	var tempMonth = (((paramMonth+1) + "").length == 1) ? ("0" + (paramMonth+1)) : (paramMonth+1);
+	var tempDay = ((paramDay + "").length == 1) ? ("0" + paramDay) : paramDay;
+	return tempYear + "" + tempMonth + "" + tempDay;
+}
+
+/**
+ * datepicker값(YYYY/MM/DD) => YYYYMMDD로 변환하여 반환
+ */
+function datepickerFormat(paramDate) {
+	if(paramDate != null) {
+		var tempDateArray = paramDate.split("/");
+		if(tempDateArray.length == 3) {
+			var tempYear = tempDateArray[0];
+			var tempMonth = tempDateArray[1];
+			(tempMonth.length == 1) ? "0" + tempMonth : tempMonth;
+			var tempDay = tempDateArray[2];
+			(tempDay.length == 1) ? "0" + tempDay : tempDay;
+			return tempYear + "" + tempMonth + "" + tempDay;
+		}
+	}
+}
+
+/**
+ * 차트 날짜 세팅
+ */
+var xmlHttp;
+function srvTime() { // 현재 서버 시간 구하기
+    try {
+        xmlHttp = new XMLHttpRequest(); // FF, Opera, Safari, Chrome
+    } catch (err1) {
+        try {
+            xmlHttp = new ActiveXObject('Msxml2.XMLHTTP'); // IE
+        } catch (err2) {
+            try {
+                xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+            } catch (eerr3) {
+                console.log("AJAX not supported"); // AJAX not supported, use CPU time.
+            }
+        }
+    }
+    xmlHttp.open('HEAD', window.location.href.toString(), false);
+    xmlHttp.setRequestHeader("Content-Type", "text/html");
+    xmlHttp.send('');
+    return xmlHttp.getResponseHeader("Date");
+}
+
+var st = srvTime(); // 현재 서버 시간
+var before = new Date(st); // 시작 날짜
+// before.setDate(before.getDate() - 6);
+var beforeYear = before.getFullYear(); // 시작 날짜 Year
+var beforeMonth = before.getMonth(); // 시작 날짜 Month
+var beforeDay = before.getDate(); // 시작 날짜 Day
+var today = new Date(st); // 오늘 날짜
+var todayYear = today.getFullYear(); // 오늘 날짜 Year
+var todayMonth = today.getMonth(); // 오늘 날짜 Month
+var todayDay = today.getDate(); // 오늘 날짜 Day
+var startDate = dateFormat(beforeYear, beforeMonth, beforeDay); // 시작 날짜 YYYYMMDD
+var endDate = dateFormat(todayYear, todayMonth, todayDay); // 종료 날짜 YYYYMMDD
+var todayDate = dateFormat(todayYear, todayMonth, todayDay); // 오늘 날짜 YYYYMMDD
+var startPoint = Date.UTC(beforeYear, beforeMonth, beforeDay, 00); // 시작 포인트 날짜 Date.UTC() 포맷
+
+// 현재 시간 갱신
+function setCurrentTime() {
+	var st2 = srvTime();
+	var currentTime = new Date(st2); // 현재 시간			
+	var year = currentTime.getFullYear();
+	var month = currentTime.getMonth();
+	var day = currentTime.getDate() + "";
+	day = (day.length == 1) ? ("0" + day) : day;
+	var hour = currentTime.getHours() + "";
+	hour = (hour.length == 1) ? ("0" + hour) : hour;
+	var minute = currentTime.getMinutes() + "";
+	minute = (minute.length == 1) ? ("0" + minute) : minute;
+	var second = currentTime.getSeconds() + "";
+	second = (second.length == 1) ? ("0" + second) : second;
+	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	var currentTimeContent = hour + ":" + minute + ":" + second;
+	var currentDateContent = day + " " + months[month] + " " +  + year;
+	$("#currentTime").html(currentTimeContent);
+	$("#currentDate").html(currentDateContent);
+	setTimeout(setCurrentTime, 500); // 0.5초 단위로 갱신
+}
+
+
+/**
  * (Area) 통계 차트 Ajax
  */
 
